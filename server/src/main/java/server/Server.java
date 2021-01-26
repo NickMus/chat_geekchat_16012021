@@ -13,6 +13,11 @@ public class Server {
     private List<ClientHandler> clients;
     private AuthService authService;
 
+
+    public List<ClientHandler> getClients() {
+        return clients;
+    }
+
     public Server() {
         clients = new CopyOnWriteArrayList<>();
         authService = new SimpleAuthService();
@@ -42,6 +47,16 @@ public class Server {
         String message = String.format("[ %s ]: %s", clientHandler.getNickname(), msg);
         for (ClientHandler c : clients) {
             c.sendMsg(message);
+        }
+    }
+
+    public void privateMsg(ClientHandler sender, String receiver, String msg){
+        String message = String.format("[ %s to %s ]: %s", sender.getNickname(), receiver, msg);
+        for (ClientHandler c : clients) {
+            if (c.getNickname().equals(receiver)) {
+                c.sendMsg(message);
+            }
+            return;
         }
     }
 

@@ -58,8 +58,16 @@ public class ClientHandler {
                             System.out.println("client disconnected");
                             break;
                         }
+                        if(str.startsWith(Command.PRV_MSG)) {
+                            String[] token = str.split("\\s" , 3);
+                            if(token.length < 3 ){
+                                continue;
+                            }
+                            server.privateMsg(this, token[1], token[2]);
+                        }else{
+                            server.broadcastMsg(this, str);
+                        }
 
-                        server.broadcastMsg(this, str);
                     }
                 } catch (IOException e) {
                     e.printStackTrace();
