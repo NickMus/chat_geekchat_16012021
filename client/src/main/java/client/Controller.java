@@ -10,12 +10,16 @@ import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;
 import javafx.scene.layout.HBox;
 import javafx.stage.Stage;
+import server.DatabaseHandler;
+import server.User;
 
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
 import java.net.Socket;
 import java.net.URL;
+import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.util.ResourceBundle;
 
 public class Controller implements Initializable {
@@ -158,5 +162,33 @@ public class Controller implements Initializable {
             stage.setTitle(String.format("GeekChat [ %s ]", nickname));
             });
         }
+    }
+
+    private void loginUser(String loginText, String passText) {
+        DatabaseHandler dbHandler = new DatabaseHandler();
+        User user = new User();
+        user.setLogin(loginText);
+        user.setPassword(passText);
+        ResultSet result = dbHandler.getUser(user);
+
+        int counter = 0;
+
+        while (true) {
+            try {
+                if (!result.next()) break;
+            } catch (SQLException throwables) {
+                throwables.printStackTrace();
+            }
+            counter++;
+        }
+        if (counter >= 1) {
+            openNewScene("/sample/contents.fxml");
+        } else {
+            Shake loginAnim = new Shake(loginField);
+            Shake passAnim = new Shake(passField);
+            loginAnim.playAnim();
+            passAnim.playAnim();
+        }
+
     }
 }
